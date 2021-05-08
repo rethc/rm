@@ -1,1 +1,143 @@
-<h1>hello</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>dasoft.ch | Uptime dasoft</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="css/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h1><span class="fa fa-dashboard"></span> dasoft.ch <small>dashboard</small></h1>
+			<p>
+				A quick overview of your server's uptime.
+			</p>
+		</div>
+		
+		<!-- error handling -->
+		<div id="error" class="alert alert-danger collapse" role="alert"></div>
+
+		<!-- progress bar of loaded servers -->
+		<div class="progress">
+			<div class="progress-bar progress-striped bg loading" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
+		</div>
+		<div class="accordion" id="accordion">
+			<div id="server-container"></div>
+		</div>
+		<br />
+		<div class="row">
+			<div class="col-md-auto">
+				
+		<!-- count down timer + progress bar -->
+			<i class="fa fa-refresh"></i>
+			</div>
+			<div class="col">
+				<div id="progressBar" class="progress">
+					<div class="progress-bar progress-bar-striped" role="progressbar"></div>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- modal windows-->
+		<div id="modal-about" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<div class="modal-title">Need help?</div>
+				</div>
+				<div class="modal-body">
+					<p>On this page you can see the status of different websites.</p>
+					<p>Each gauge shows the uptime of last day, week, month, year and all time. (These calculations are not very accurate...)</p>
+					<p>Click on the <i class="fa fa-time"></i>-icon to see the log of last month. Or open the monitored page by clicking on <i class="fa fa-link"></i></p>
+					<p>The page automatically refreshes every 5 Minutes</p>
+				</div>
+				<div class="modal-footer">
+        			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- navigation bar -->
+		<nav class="navbar bg-dark navbar-dark fixed-bottom">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<button type="button" data-toggle="modal" data-target="#modal-about" class="btn btn-secondary">
+						<i class="fa fa-info-circle"></i>
+						About
+					</button>
+					<button type="button" href="https://www.dasoft.ch" target="_blank" class="btn btn-secondary">
+						<i class="fa fa-link"></i>
+						  dasoft.ch
+					</button>
+				</li>
+			</ul>
+		</nav>
+	</div>
+
+	<script type="template/mustache" id="server-template">
+		<div class="card">
+		    <div class="card-header collapsed" aria-expanded="false" data-toggle="collapse" data-target="#collapse{{id}}">
+					<h3 class="float-left" style="background-image: url(https://www.google.com/s2/favicons?domain={{url}})">{{friendly_name}}</h3>
+					<div class="float-right">
+						<i class="badge badge-pill badge-{{label}}">{{statustxt}}</i>
+						<a href="{{url}}" target="_blank" title="Open monitored page" type="button" class="btn btn-sm btn-light">
+							<i class="fa fa-link"></i>
+						</a>
+						<span class="fa fa-plus more-less"></span>
+
+				  </div>
+			</div>
+			<div id="collapse{{id}}" class="collapse" data-parent="#accordion">
+				<div class="card-body">
+					<div class="row">
+						<div class="col">
+							<span id="control_{{id}}"></span>
+						</div>
+						<div class="col">
+							<span id="chart_{{id}}"></span>
+						</div>
+						<div class="col">
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">Status</th>
+										<th scope="col">Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									{{#logs}}
+									<tr>
+										<th scope="row">{{idx}}</th>
+										<td><span class="badge badge-{{labeltype}}"><i class="fa fa-{{typeicon}}"></i></span></td>
+										<td>{{datetime}}</td>
+									</tr>
+									{{/logs}}
+								</body>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js" integrity="sha256-MPgtcamIpCPKRRm1ppJHkvtNBAuE71xcOM+MmQytXi8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js" integrity="sha256-xljKCznmrf+eJGt+Yxyo+Z3KHpxlppBZSjyDlutbOh0=" crossorigin="anonymous"></script>
+	<script src="js/config.js" type="text/javascript"></script>
+	<!-- google chart biscuits -->
+    <!--Load the AJAX API-->
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="js/app.js" type="text/javascript"></script>
+</body>
+</html>
